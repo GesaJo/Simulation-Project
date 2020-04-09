@@ -8,6 +8,8 @@ class Supermarket:
 
 
     def draw(self, customers):
+        """ Draws the supermarket with customer locations"""
+        
         self.frame = self.market_image.copy()
         for customer in customers:
             y, x = customer.current_location

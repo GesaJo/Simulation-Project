@@ -25,6 +25,8 @@ class SupermarketCustomer:
 
 
     def get_coord(self, aisle):
+        """turning aisles into coordinates in the supermarket"""
+
         if aisle == 'drinks':
             ty, tx = [random.randint(135, 435), random.randint(65, 175)]
         elif aisle == 'dairy':
@@ -39,14 +41,20 @@ class SupermarketCustomer:
 
 
     def next_target(self, aisle):
+        """calculating the next aisle with the probability matrix and
+        setting target coordinates to new values"""
+
         aisle_probas = self.prob_matrix.loc[aisle]
         self.target_aisle = np.random.choice(aisle_probas.index, p=aisle_probas.values)
         self.ty, self.tx = self.get_coord(self.target_aisle)
 
 
     def move(self):
+        """ Moving a customer through the supermarket"""
+
         y, x = self.current_location
 
+        # if target is checkout:
         if self.ty == 555:
             if y == self.ty and x == self.tx:
                 if self.counter < 150:
@@ -71,9 +79,11 @@ class SupermarketCustomer:
             elif y < 555:
                 self.current_location[0] += self.speed # go down
 
+        # if goal-aisle is reached:
         elif x == self.tx and y == self.ty:
             self.next_target(self.target_aisle)
 
+        # if customer is not exactly under/over target x
         elif x != self.tx:
             if y > 450:
                 if self.tx > x:
@@ -96,6 +106,7 @@ class SupermarketCustomer:
                 else:
                     self.current_location[0] += self.speed # go down
 
+        # if customer is right under/over target x
         elif x == self.tx:
             if y == 100:
                 self.current_location[0] += self.speed  # go down
@@ -111,6 +122,7 @@ class SupermarketCustomer:
 
 
 if __name__ == '__main__':
+    
     customer_image = np.zeros((15, 15, 3), dtype=np.uint8)
     supermarket_image = cv2.imread('market.png')
 
