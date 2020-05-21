@@ -12,7 +12,6 @@ Wednesday = pd.read_csv('data/wednesday.csv', sep=';')
 Thursday = pd.read_csv('data/thursday.csv', sep=';')
 Friday = pd.read_csv('data/friday.csv', sep=';')
 
-
 # Preparing data
 def customer_separation(customer_col, day):
     customer = []
@@ -41,17 +40,17 @@ df['day'] = df['timestamp'].dt.weekday
 df['firsts'] = df.duplicated('customer')
 firsts = df[df['firsts'] == False]
 following = df[df['firsts'] == True]
-first_grouped = firsts.groupby('location').count()
-following_grouped = following.groupby('location').count()
+# first_grouped = firsts.groupby('location').count()
+# following_grouped = following.groupby('location').count()
 
-f_grouped = firsts.groupby('location').count()
-initial_state_abs = f_grouped['customer']
+initial_state_abs = firsts.groupby('location').count()['customer']
+# initial_state_abs = f_grouped['customer']
 denominator = initial_state_abs.sum()
 
 # initial_state_vector
 initial_state_vector = initial_state_abs/denominator
 
 # probability matrix
-next_aisle = df.groupby(['customer'])['location'].shift(-1)
-df['next'] = next_aisle
+df['next'] = df.groupby(['customer'])['location'].shift(-1)
+# df['next'] = next_aisle
 trans_prob_matrix = pd.crosstab(df['location'], df['next'], normalize='index')

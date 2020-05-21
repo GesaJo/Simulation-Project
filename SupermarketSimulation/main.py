@@ -122,13 +122,13 @@ class SupermarketCustomer:
 
 
 if __name__ == '__main__':
-    
+
     customer_image = np.zeros((15, 15, 3), dtype=np.uint8)
     supermarket_image = cv2.imread('market.png')
 
     #creating customer-instances:
     customers = []
-    for _ in range(20):
+    for _ in range(10):
         customers.append(SupermarketCustomer(trans_prob_matrix, initial_state_vector, customer_image))
 
     # creating supermarket-instance:
