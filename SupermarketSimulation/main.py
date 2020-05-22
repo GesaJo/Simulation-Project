@@ -11,9 +11,7 @@ class SupermarketCustomer:
     def __init__(self, prob_matrix, initial_state_array, image, state_space=['dairy', 'fruit', 'drinks', 'spices']):
         self.prob_matrix = prob_matrix
         self.image = image
-        self.image[:,:,0] = random.randint(1, 255)
-        self.image[:,:,1] = random.randint(1, 255)
-        self.image[:,:,2] = random.randint(1, 255)
+        self.image[:,:,0] = 204
         self.state_space = state_space
         self.initial_state_array = initial_state_array
         self.current_location = [650, random.randint(680, 880)]
@@ -22,6 +20,9 @@ class SupermarketCustomer:
         self.speed = 1
         self.counter = 0
         self.counter2 = 0
+        self.counter3 = 0
+        self.money = 0
+        self.total = 0
 
 
     def get_coord(self, aisle):
@@ -47,6 +48,14 @@ class SupermarketCustomer:
         aisle_probas = self.prob_matrix.loc[aisle]
         self.target_aisle = np.random.choice(aisle_probas.index, p=aisle_probas.values)
         self.ty, self.tx = self.get_coord(self.target_aisle)
+        if self.target_aisle == 'dairy':
+            self.money += 5
+        elif self.target_aisle == 'fruit':
+            self.money += 4
+        elif self.target_aisle == 'spices':
+            self.money += 3
+        elif self.target_aisle == 'drinks':
+            self.money += 6
 
 
     def move(self):
@@ -54,8 +63,7 @@ class SupermarketCustomer:
 
         y, x = self.current_location
 
-        # if target is checkout:
-        if self.ty == 555:
+        if self.ty == 555:  # target = checkout
             if y == self.ty and x == self.tx:
                 if self.counter < 150:
                     self.counter += 1
@@ -64,8 +72,10 @@ class SupermarketCustomer:
                 elif self.counter == 150:
                     self.image = np.zeros((15,15,3), dtype=np.uint8)
                     self.image[:,:,0:3] = 255
+                    self.total = 0
                     if self.counter2 == 0:
                         customers.append(SupermarketCustomer(trans_prob_matrix, initial_state_vector, customer_image))
+                        self.total = self.money
                         self.counter2 +=1
             elif y < 470:
                 self.current_location[0] += self.speed # go down
@@ -79,9 +89,12 @@ class SupermarketCustomer:
             elif y < 555:
                 self.current_location[0] += self.speed # go down
 
-        # if goal-aisle is reached:
+        # when goal-aisle is reached:
         elif x == self.tx and y == self.ty:
-            self.next_target(self.target_aisle)
+            if self.counter3 < 150:
+                self.counter3 += 1
+            elif self.counter3 == 150:
+                self.next_target(self.target_aisle)
 
         # if customer is not exactly under/over target x
         elif x != self.tx:
@@ -120,11 +133,11 @@ class SupermarketCustomer:
                 self.current_location[0] -= self.speed  # go up
 
 
-
 if __name__ == '__main__':
 
     customer_image = np.zeros((15, 15, 3), dtype=np.uint8)
     supermarket_image = cv2.imread('market.png')
+    money = 0
 
     #creating customer-instances:
     customers = []
@@ -139,8 +152,13 @@ if __name__ == '__main__':
         simulation.draw(customers)
         for customer in customers:
             customer.move()
+            money += customer.total
 
+        # cv2.putText(supermarket_image, f"{int(money)}", org=(30, 555), fontFace = cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 0, 0), thickness=2)
+        # cv2.putText(supermarket_image, f"{int(money)}", org=(30, 555), fontFace = cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(175, 175, 175), thickness=2)
         cv2.imshow('frame', simulation.frame)
+
+        # print(money)
         if cv2.waitKey(1) & 0xFF == ord('q'):  #stops if q is pressed
             break
 
