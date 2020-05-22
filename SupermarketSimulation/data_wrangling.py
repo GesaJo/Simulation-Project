@@ -2,8 +2,6 @@
 and probability matrix """
 
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 
 Monday = pd.read_csv('data/monday.csv', sep=';')
@@ -36,21 +34,14 @@ df = Monday.append([Tuesday, Wednesday, Thursday, Friday], sort=True)
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 df['day'] = df['timestamp'].dt.weekday
 
-# aisles visited first and following
+# aisles visited first
 df['firsts'] = df.duplicated('customer')
 firsts = df[df['firsts'] == False]
-following = df[df['firsts'] == True]
-# first_grouped = firsts.groupby('location').count()
-# following_grouped = following.groupby('location').count()
-
-initial_state_abs = firsts.groupby('location').count()['customer']
-# initial_state_abs = f_grouped['customer']
-denominator = initial_state_abs.sum()
 
 # initial_state_vector
-initial_state_vector = initial_state_abs/denominator
+initial_state_abs = firsts.groupby('location').count()['customer']
+initial_state_vector = initial_state_abs/initial_state_abs.sum()
 
 # probability matrix
 df['next'] = df.groupby(['customer'])['location'].shift(-1)
-# df['next'] = next_aisle
 trans_prob_matrix = pd.crosstab(df['location'], df['next'], normalize='index')

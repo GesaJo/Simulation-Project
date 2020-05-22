@@ -6,7 +6,6 @@ class Supermarket:
         self.market_image = market_image
         self.customers = customers
 
-
     def draw(self, customers):
         """ Draws the supermarket with customer locations"""
 

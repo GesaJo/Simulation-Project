@@ -1,6 +1,5 @@
 import numpy as np
 import random
-import time
 import cv2
 from data_wrangling import trans_prob_matrix, initial_state_vector
 from market_class import Supermarket
@@ -123,12 +122,15 @@ class SupermarketCustomer:
 
 if __name__ == '__main__':
 
+    print("Please enter how many customers are allowed in the supermarket at the same time:")
+    number_customers = input()
+
     customer_image = np.zeros((15, 15, 3), dtype=np.uint8)
     supermarket_image = cv2.imread('market.png')
 
     #creating customer-instances:
     customers = []
-    for _ in range(10):
+    for _ in range(int(number_customers)):
         customers.append(SupermarketCustomer(trans_prob_matrix, initial_state_vector, customer_image))
 
     # creating supermarket-instance:
