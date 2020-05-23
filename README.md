@@ -2,7 +2,7 @@
 
 This program simulates a supermarket where a specific number of people are allowed to go shopping at the same time. It is based on Markov-chains and has been created using numpy, pandas and cv2.
 
-![visualization](./Simulation.gif)
+![visualization](./Supermarket.gif)
 
 The EDA is rather for giving an overview over the data and generating ideas for further analyses.
 
